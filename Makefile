@@ -6,7 +6,7 @@ BUILD_PATH = build
 BIN_PATH = $(BUILD_PATH)/bin
 
 # executable # 
-BIN_NAME = out
+BIN_NAME = yballs
 
 # extensions #
 SRC_EXT = cpp
@@ -24,9 +24,9 @@ DEPS = $(OBJECTS:.o=.d)
 
 # flags #
 COMPILE_FLAGS = -Wall -Wextra -g
-INCLUDES = -I include/ -I /usr/local/include 
+INCLUDES = -I include/ -I /usr/local/include  
 # Space-separated pkg-config libraries used by this project
-LIBS = 
+LIBS = -lSDL2 
 
 include version.mk
 
@@ -62,7 +62,7 @@ all: $(BIN_PATH)/$(BIN_NAME)
 # Creation of the executable
 $(BIN_PATH)/$(BIN_NAME): $(OBJECTS)
 	@echo "Linking: $@"
-	$(CXX) $(OBJECTS) -o $@
+	$(CXX) $(OBJECTS) -o $@ $(LIBS)
 
 # Add dependency files, if they exist
 -include $(DEPS)
@@ -72,7 +72,7 @@ $(BIN_PATH)/$(BIN_NAME): $(OBJECTS)
 # dependency files to provide header dependencies
 $(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
 	@echo "Compiling: $< -> $@"
-	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LIBS) -MP -MMD -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -MP -MMD -c $< -o $@ $(LIBS)
 
 # Echo the version numbers into version.h 
 update_version: 
@@ -85,5 +85,5 @@ update_version:
 
 .PHONY: tests
 tests:
-	g++ tests/testmain.cpp -c $(INCLUDES) $(LIBS) -o $(BUILD_PATH)/testmain.o
-	g++ $(BUILD_PATH)/testmain.o $(INCLUDES) $(LIBS) $(SOURCES_NOTMAIN) -o $(BUILD_PATH)/tests && $(BUILD_PATH)/tests -r compact
+	g++ tests/testmain.cpp -c $(INCLUDES) -o $(BUILD_PATH)/testmain.o  $(LIBS)
+	g++ $(BUILD_PATH)/testmain.o $(INCLUDES) $(SOURCES_NOTMAIN)  -o $(BUILD_PATH)/tests && $(BUILD_PATH)/tests -r compact 
