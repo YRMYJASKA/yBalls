@@ -4,13 +4,22 @@
 //
 
 #include <SDL2/SDL.h>
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
+#include <unordered_map>
 
 #include <ball.hpp>
 #include <misc.hpp>
+#include <settings.hpp>
+
+std::unordered_map<int, yballs::Ball> ball_set;
 
 int main(int argc, char* args[])
 {
+    // seed the random number generation
+    std::srand(std::time(nullptr));
+
     // TODO: parse the args
 
     const int SCR_W = 640;
@@ -45,8 +54,17 @@ int main(int argc, char* args[])
     SDL_RenderClear(g_renderer);
 
     // Create a ball and draw it
-    yballs::Vec v1(1, 2);
-    yballs::Ball b1(200, 200, 100, 1, v1);
+    {
+        yballs::Vec _v;
+        yballs::Ball _b;
+        for (int i = 0; i < 10; i++) {
+            _v.x = -10 + std::rand() % 20;
+            _v.y = -10 + std::rand() % 20;
+            _b = yballs::Ball((std::rand() % SCR_W + 10), (std::rand() % SCR_H + 10),
+                (std::rand() % 150 + 10), 1, _v);
+            ball_set[i] = _b;
+        }
+    }
 
     while (true) {
         SDL_Event event;
@@ -59,11 +77,22 @@ int main(int argc, char* args[])
         SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(g_renderer);
         SDL_SetRenderDrawColor(g_renderer, 0xFF, 0x00, 0x00, 0xFF);
-        draw_ball(g_renderer, b1);
+        for (const auto& e : ball_set) {
+            draw_ball(g_renderer, e.second, true);
+            yballs::Ball tempball;
+            tempball = e.second;
+            tempball.c.x += tempball.speed.x;
+            tempball.c.y += tempball.speed.y;
+            if (yballs::settings::DEBUG) {
+                std::cout << "Ball " << e.first << "\n";
+                std::cout << e.second.speed << " => " << tempball.speed << std::endl;
+                std::cout << "(" << e.second.c.x << ", " << e.second.c.y << ") => ("
+                          << tempball.c.x << ", " << tempball.c.y << ")\n";
+            }
+            ball_set.at(e.first) = tempball;
+        }
         SDL_RenderPresent(g_renderer);
-		b1.c.x = b1.c.x + b1.speed.x;
-		b1.c.y = b1.c.y + b1.speed.y;
-		SDL_Delay(100);
+        SDL_Delay(100);
     }
 
     // Exit the program, cleanly
