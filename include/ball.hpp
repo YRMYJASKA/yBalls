@@ -36,8 +36,6 @@ void draw_ball(SDL_Renderer* renderer, Ball b, unsigned int fidelity = 360)
     unsigned int y = 0;
     double theta = 0;
 
-    using namespace std;
-
     while (theta < PI * 2) {
         // Draw each point for the correct octave
         // Determine new x and y
