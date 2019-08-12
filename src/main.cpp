@@ -151,7 +151,7 @@ int main(int argc, char* args[])
             for (long unsigned int j = i + 1; j < ball_set.size(); j++) {
                 yballs::Ball b2 = ball_set[j];
                 double dist = dist_between_points(b1.c, b2.c);
-                if (dist <= b1.r + b2.r) {
+                if (pow(b1.c.x - b2.c.x, 2) + pow(b1.c.y - b2.c.y, 2) <= pow(b1.r + b2.r, 2)) {
                     // There is a collision between the two balls
                     collided_pairs.push_back({ &ball_set[i], &ball_set[j] });
 
