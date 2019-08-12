@@ -7,8 +7,8 @@ namespace yballs {
 
 // Generalised point on the Cartesian plane
 struct Point {
-    unsigned int x = 0;
-    unsigned int y = 0;
+    int x = 0;
+    int y = 0;
 };
 
 double dist_between_points(Point p1, Point p2)
@@ -34,10 +34,10 @@ public:
         this->y = y;
     }
 
-    // Return the magniture of the vector. ||X||
+    // Return the magnitude of the vector
     double mag()
     {
-        return sqrt(pow(this->x, 2) + pow(this->y, 2));
+        return sqrtf(pow(this->x, 2) + pow(this->y, 2));
     }
 
     // Operator overloading
@@ -86,6 +86,12 @@ public:
         this->y *= scalar;
         return *this;
     }
+    Vec& operator*=(const Vec& rhs)
+    {
+        this->x *= rhs.x;
+        this->y *= rhs.y;
+        return *this;
+    }
     template <typename T>
     friend Vec operator*(Vec lhs, T scalar)
     {
@@ -97,6 +103,11 @@ public:
     {
         rhs *= scalar;
         return rhs;
+    }
+    friend Vec operator*(Vec lhs, const Vec& rhs)
+    {
+        lhs *= rhs;
+        return lhs;
     }
     template <typename T>
     Vec& operator/=(T scalar)

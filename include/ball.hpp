@@ -30,7 +30,7 @@ public:
     Point c;
     double r;
     double mass;
-    Vec speed;
+    Vec speed; // Units/second
 	
 	// Operator overloading
 	// Assignment
