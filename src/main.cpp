@@ -22,6 +22,9 @@ bool pause_main = false;
 unsigned char BALL_COLOUR[3] = { 0xFF, 0x00, 0x00 };
 unsigned char BACKGROUND_COLOUR[3] = { 0xFF, 0xFF, 0xFF };
 
+unsigned int scrs_num = 0;
+SDL_Surface* sshot;
+
 using namespace yballs::settings;
 
 int main(int argc, char* args[])
@@ -74,12 +77,12 @@ int main(int argc, char* args[])
             i += 3;
         } else if (std::string("-f").compare(args[i]) == 0) {
             ball_set = yballs::configuration(args[i + 1]);
-			if(ball_set.size() < 1){
-				std::cout << "reading from file failed OR empty file!\n";
-				return -1;
-			}
+            if (ball_set.size() < 1) {
+                std::cout << "reading from file failed OR empty file!\n";
+                return -1;
+            }
             i++;
-			FLAGS["-r"] = false;
+            FLAGS["-r"] = false;
         } else if (FLAGS.find(args[i]) != FLAGS.end()) {
             // A flag was set, therefore set it to true
             FLAGS[args[i]] = true;
@@ -178,6 +181,7 @@ int main(int argc, char* args[])
                 running_main = false;
                 continue;
             }
+			std::string sshot_name = "screenshot";
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
                 case SDLK_SPACE:
@@ -188,6 +192,14 @@ int main(int argc, char* args[])
                     break;
                 case SDLK_s:
                     std::cout << "Taking Screenshot...\n";
+                    sshot = SDL_CreateRGBSurface(0, PARAMS["--width"],
+                        PARAMS["--height"], 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+                    SDL_RenderReadPixels(g_renderer, NULL,
+                        SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
+					sshot_name += std::to_string(scrs_num);
+                    SDL_SaveBMP(sshot, sshot_name.append(".bmp").c_str());
+                    SDL_FreeSurface(sshot);
+                    scrs_num++;
                     break;
                 default:
                     break;
