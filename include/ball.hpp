@@ -31,9 +31,9 @@ public:
     double r;
     double mass;
     Vec speed; // Units/second
-	
-	// Operator overloading
-	// Assignment
+
+    // Operator overloading
+    // Assignment
     Ball& operator=(Ball rhs) noexcept
     {
         std::swap(c, rhs.c);
@@ -42,6 +42,16 @@ public:
         std::swap(speed, rhs.speed);
         return *this;
     }
+
+    friend std::ostream& operator<<(std::ostream& out, const Ball& b)
+    {
+        return out << b.c.x << " " << b.c.y << " " << b.r << " " << b.mass << " " << b.speed.x << " " << b.speed.y;
+    }
+    friend std::istream& operator>>(std::istream& in, Ball& b)
+    {
+        return in >> b.c.x >>  b.c.y >>  b.r >>  b.mass >>  b.speed.x >>  b.speed.y;
+    }
+
 private:
 };
 
